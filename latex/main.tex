@@ -40,6 +40,7 @@
 
 
 \usepackage{booktabs}
+\usepackage{subfig}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -356,7 +357,7 @@
 		$z_{n}$ & Voltage at shunt & $[0,T] \rightarrow \mathbb{R}$ \\
 		$i_{m,n}$ & Current through main branch & $[0,T] \rightarrow \mathbb{R}$ \\
 		$i_{s,n}$ & Current through shunt & $[0,T] \rightarrow \mathbb{R}$ \\
-		$R_{n}$, $L_{n}$, $C_{n}$ & Resistor, Inductor, Capacitor & $\mathbb{R}_{>0}$ \\ \hlinewd{1.2pt}
+		$R_{n}$, $L_{n}$, $C_{n}$ & Resistor, Inductor, Capacitor & $\mathbb{R}_{>0} \setminus \{\infty\}$ \\ \hlinewd{1.2pt}
 	\end{tabularx}
 	\caption{Nomenclature of electrical states and quantities.}
 	\label{table:el_symbols_explanation}
@@ -527,7 +528,7 @@ The symbols of these matrices, $M$, $D$ and $S$, refer to the mass, damping and 
 	\end{pmatrix}
 	\label{eq:triangular_matrix} 
 \end{equation}
-where our coefficients $(a_{n}, b_{n})$ stand for the related electrical coefficients, $R_{n}$, $L_{n}$, $C_{n}$; and the finite difference stencil is
+where our coefficients $(a_{n}, b_{n})$ stand for the related electrical coefficients, $R_{n}$, $L_{n}$, $C_{n}$ and their reciprocals; and the finite difference stencil is
 \begin{equation*}
 	\tilde{F} = 
 	\begin{pmatrix}
@@ -539,7 +540,7 @@ where our coefficients $(a_{n}, b_{n})$ stand for the related electrical coeffic
 	\end{pmatrix} 
 	\label{eq:finite_diff_stencil} 
 \end{equation*}
-The matrix entries for each circuit type are noted in Table \ref{table:overview_matrix_entries}. The triangular matrix structure corresponds to a spatially discrete integration and the finite difference shape to a differentiation.
+The matrix entries for each circuit type are noted in Table \ref{table:overview_matrix_entries}. The triangular matrix structure corresponds to a spatially discrete integration and the finite difference shape to a differentiation.  We assume, $R_{n}$, $L_{n}$, $C_{n} \in \mathbb{R}_{>0} \setminus \{\infty\}$ and so the resulting triangular matrices are invertible. Hence, we are able to reformulate the second-order system via inverse matrix multiplication as first-order system. 
 
 
 \begin{figure}[t!]
@@ -649,10 +650,6 @@ The matrix entries for each circuit type are noted in Table \ref{table:overview_
 	\label{table:overview_matrix_entries}
 \end{table}
 
-
-
-\newpage
-
 \subsection{First-Order System}
 Subsequently, we reformulate Eq. \eqref{eq:rlc_second_order_1} to yield a first-order system in the common state space formulation. Hence, we firstly find
 \begin{equation}
@@ -690,6 +687,7 @@ We introduce the new states $x_{1}(t) = z(t)$, $x_{2}(t) = \partial_{t} z(t)$ an
 \end{align}
 If matrix $M$ in Eq. (\ref{eq:rlc_second_order_1},\ref{eq:rlc_second_order_2}) is not well conditioned, i.e. $M$ has a large condition number $\kappa = \frac{\max_{i} |\lambda_{i}|}{\min_{i} |\lambda_{i}|} \gg 1$ with eigenvalues $\lambda_{i}$ and $i \in [1,\ldots,2N]$, then a numerical computation of sub-matrices $P$ and $Q$ might be prone to numerical errors; and hence we need to have a closed form of these sub-matrices. In Fig. \ref{fig:matrix_multiplication}, we sketch the matrix multiplications from Eq. \eqref{eq:first_order_submatrices_P_Q} for the discussed matrix shapes in Eq. (\ref{eq:triangular_matrix}, \ref{eq:finite_diff_stencil}); and subsequently, we discuss these computations in detail. 
 
+\subsection*{Inverse Triangular Matrix and Finite Difference Stencil}
 To compute sub-matrices $P$ and $Q$ for circuit types (a) and (b), we need to find the inverse of their triangular matrix $M$. It has the shape as noted in Eq. \eqref{eq:triangular_matrix} and its inverse is found as the upper finite difference stencil shape 
 \begin{align*}
 	\tilde{T}^{-1} = 
@@ -705,10 +703,11 @@ A multiplication of $\tilde{T}^{-1}$ with a lower finite difference stencil, see
 \begin{equation*}
 	\left[ \frac{-1}{a_{n}~ b_{n}},  \underbrace{\frac{1}{a_{n}~ b_{n}} + \frac{1}{a_{n+1}~ b_{n}}}_{n = k ~~ \text{(row = col.)}}, \frac{-1}{a_{n+1}~ b_{n}}\right] \text{.}
 \end{equation*}
+In case of circuit type (a), we compute sub-matrix $P$ with this matrix multiplication, while for circuit type (b), we find sub-matrix $Q$ with such a tridiagonal shape.
+%{\color{red} with an upper triangular matrix, like matrix $S$ for circuit (a) or $D$ for circuit (b), results in an upper triangular matrix again; where a multiplication with the finite difference stencil, $S$ for circuit (a) or $D$ for circuit (b), results in a tridiagonal shaped matrix. }
 
-{\color{red} with an upper triangular matrix, like matrix $S$ for circuit (a) or $D$ for circuit (b), results in an upper triangular matrix again; where a multiplication with the finite difference stencil, $S$ for circuit (a) or $D$ for circuit (b), results in a tridiagonal shaped matrix. }
-
-We specify the second upper triangular matrix as $U = \left[\alpha_{n}~b_{k}\right]$ analog to $T$ in  Eq. \eqref{eq:triangular_matrix}, with equal $b_{k}$ but different $a_{n} \neq \alpha_{n}$. We evaluate the multiplication elementwise as 
+\subsection*{Inverse Triangular and Triangular Matrix}
+We consider the inverse triangular matrix $\tilde{T}^{-1}$ as above and we specify the second upper triangular matrix as $U = \left[\alpha_{n}~b_{k}\right]$ analog to $T$ in  Eq. \eqref{eq:triangular_matrix}, with equal $b_{k}$ but different $a_{n} \neq \alpha_{n}$. We evaluate the multiplication elementwise as 
 \begin{align}
 	\left. \tilde{T}^{-1} \cdot U \right\lvert_{n,k} = 
 	\begin{cases}
@@ -717,32 +716,38 @@ We specify the second upper triangular matrix as $U = \left[\alpha_{n}~b_{k}\rig
 		0 \quad &\text{else}
 	\end{cases}
 \end{align}
-and so we have in general a triangular matrix. However, if we have a scaling $\alpha_{n} = \epsilon a_{n}$ for all $n \in \{1,\ldots,N\}$ with $\epsilon \in \mathbb{R}$, then we yield a pure diagonal matrix.
+and so we have in general a triangular matrix. However, if we have a scaling $\alpha_{n} = \epsilon a_{n}$ for all $n \in \{1,\ldots,N\}$ with $\epsilon \in \mathbb{R}$, then we yield a pure diagonal matrix
+\begin{equation*}
+	\tilde{T}^{-1} \cdot U = \epsilon~I \text{.}
+\end{equation*}
+We emphasize that this matrix multiplication is relevant for circuit type (a) to yield sub-matrix $Q$; and for circuit type (b) to compute $P$.
 
-~\\~~\\
-
+\subsection*{Inverse Finite Difference Stencil and Triangular Matrix}
+The third matrix multiplication is only applied for the first-order systems of circuit type (c). Here, we invert the finite difference stencil $\tilde{F}$ and we obtain a lower triangular matrix
 \begin{equation*}
 	\tilde{F}^{-1} =
 	 	\begin{pmatrix}
 	 	1 & 0  &  0\\
 	 	\vdots 	& \ddots &  0 \\
 	 	1 &	\cdots	 &     1 
-	 \end{pmatrix} 
+	 \end{pmatrix} \text{.}
 \end{equation*}
-
+We multiply this lower triangular matrix with $\tilde{T}$ as in Eq. \eqref{eq:triangular_matrix} and we evaluate the results elementwise as
 \begin{equation}
-	\left. \tilde{F}^{-1} \cdot \tilde{T}  \right\rvert_{n,k} = b_{k} \sum_{i=1}^{\min\{n,k\}} a_{i}
+	\left. \tilde{F}^{-1} \cdot \tilde{T}  \right\rvert_{n,k} = b_{k} \sum_{i=1}^{\min\{n,k\}} a_{i} \text{.}
 \end{equation}
-
-\begin{equation}
+If all values of $b_{n}$ are equal, then this matrix multiplication results in a shape
+\begin{equation*}
+	\tilde{F}^{-1} \cdot \tilde{T} =
 	\begin{pmatrix}
-		 -& v & - & & \\
-		| & & - & v & - \\
-		v & | & & & \\
-		| & v & & & \\
+		 & \text{---} & v_{1} & \text{---} & \\
+		| & & \text{---} & v_{2} & \text{---} \\
+		v_{1} & | & & &  \\
+		| & v_{2} & & \ddots & \\
 		& | &  & & \\
 	\end{pmatrix}
-\end{equation}
+\end{equation*}
+where the values of the $n$-th row and column coincide.
 
 \begin{figure}[t!]
 	\centering
@@ -831,158 +836,17 @@ and so we have in general a triangular matrix. However, if we have a scaling $\a
 	\label{fig:matrix_multiplication}
 \end{figure}
 
+\begin{figure*}[t!]
+	\centering
+	\subfloat[Input Signals]{\includegraphics[width=0.99\columnwidth]{images/input_signal}}\quad
+	\subfloat[Capacitor]{\includegraphics[width=0.99\columnwidth]{images/lines_shunt_capacitor}}
+	
+	\subfloat[Resistor]{\includegraphics[width=0.99\columnwidth]{images/lines_shunt_resistor}}\quad
+	\subfloat[Inductor]{\includegraphics[width=0.99\columnwidth]{images/lines_shunt_inductor}}
+	\caption{Input signals and resulting states for Capacitor, Resistor and Inductor.}
+	\label{fig:input_output_results}
+\end{figure*}
 
-\newpage
-
-We calculate the inverse Matrix $M^{-1}$ symbolically as
-\begin{align*}
-	M^{-1} = 
-	\begin{pmatrix}
-		\frac{1}{L_{1} ~ C_{1}} & \frac{-1}{L_{2} ~ C_{1}} & 0  						 & \cdots & 0 \\[1ex]
-		0 						 &   \frac{1}{L_{2} ~ C_{2}} & \frac{-1}{L_{3} ~ C_{2}} &  & \vdots \\
-		\vdots 				 		 &  \ddots 					 & \ddots 					 & \ddots & 0	 \\
-		&  & 0 & \frac{1}{L_{N-1} ~ C_{N-1}} & \frac{-1}{L_{N} ~ C_{N-1}} \\[1ex]
-		0  & \cdots 	& &  			0			   & \frac{1}{L_{N} ~ C_{N}} 
-	\end{pmatrix}
-\end{align*}
-and we yield the  matrix entries as $P = [s_{n,k}]$ as
-\begin{align*}
-	\tilde{s}_{n,n} =&~ \frac{1}{L_{n} ~ C_{n}} + \frac{1}{L_{n+1} ~ C_{n}} \text{,} \\
-	\tilde{s}_{n,n-1} =&~ \frac{-1}{L_{n} ~ C_{n}} \text{,} \quad \tilde{s}_{n,n+1} =~ \frac{-1}{L_{n+1} ~ C_{n}}
-\end{align*}
-and $Q = [d_{n,k}]$ as
-\begin{align}
-	\tilde{d}_{n,k} =
-	\begin{cases}
-		\frac{R_{n}}{L_{n}} \quad &\text{if} ~ n = k ~\text{,}\\[1ex]
-		\left[\frac{R_{n}}{L_{n}} - \frac{R_{n+1}}{L_{n+1}} \right] \frac{C_{k}}{C_{n}}\quad &\text{if} ~ n < k ~\text{,}\\[1ex]
-		0 \quad &\text{else}
-	\end{cases}
-\end{align}
-with row $n\in \{1,\ldots,N\}$ and column $k\in \{1,\ldots,N\}$.
-
-
-Matrix $P$ has a tridiagonal shape while $Q$ has in general an upper triangular shape. If all resistor and inductor values are identical as
-\begin{equation*}
-	R_{1} = R_{2} = \ldots = R_{N} ~\text{and}\quad L_{1} = L_{2} = \ldots = L_{N}~\text{,}
-\end{equation*}
-we yield a diagonal matrix  $Q = \frac{R}{L}~I$.
-
-
-
-\section{Eigenvalues and Simulation of RLC Ladder}
-
-\begin{itemize}
-	\item Constant coefficients
-	\item Increasing coefficients
-	\item Realistic coefficients + noise (deviation)
-\end{itemize}
-
-
-\begin{equation*}
-	u(t) = \sin\left(c~\pi \sqrt{t+\epsilon}\right)
-\end{equation*}
-alternative
-\begin{equation*}
-	u(t) = \sin\left(1 + 1000~\tanh(10 (\frac{t}{1000} - \frac{1}{2}))\right)
-\end{equation*}
-
-\begin{equation*}
-	u(t) = \sin\left(1000\pi~\tanh(0.001~t)\right)
-\end{equation*}
-
-\begin{equation*}
-	u(t) = \sin\left(k\pi~\tanh(t/k)\right) \quad \text{with} \quad k=1000
-\end{equation*}
-
-\appendix
-\begin{equation*}
-	M = 
-	\begin{pmatrix}
-		L_{1} C_{1} & L_{1} C_{2} & \cdots &  L_{1} C_{N-1} & L_{1} C_{N} \\
-		0 			& L_{2} C_{2} & \cdots &  L_{2} C_{N-1} & L_{2} C_{N} \\
-		\vdots			& \ddots	  & \ddots &  \vdots        & 	\vdots	  \\
-		&			  &        & L_{N-1} C_{N-1}& L_{N-1} C_{N} \\
-		0			&	\cdots		  &        &	0            & L_{N} C_{N} 
-	\end{pmatrix} \text{,}
-\end{equation*}
-\begin{equation*}
-	D = 
-	\begin{pmatrix}
-		R_{1} C_{1} & R_{1} C_{2} & \cdots &  R_{1} C_{N-1} & R_{1} C_{N} \\
-		0 			& R_{2} C_{2} & \cdots &  R_{2} C_{N-1} & R_{2} C_{N} \\
-		\vdots & \ddots	  & \ddots &  \vdots        & 	\vdots	  \\
-		&			  &        & R_{N-1} C_{N-1}& R_{N-1} C_{N} \\
-		0 & \cdots			  &        & 0	            & R_{N} C_{N} 
-	\end{pmatrix}
-\end{equation*}
-and
-\begin{equation*}
-	S =
-	\begin{pmatrix}
-		1 & 0 & \cdots &  &  0\\
-		-1 			& 1 & 0 &   & \vdots  \\
-		0 & \ddots	  & \ddots & \ddots  & 	 \\
-		\vdots &			  &     -1  & 1 &  0 \\
-		0 &	\cdots		  &     0   & -1  & 1 
-	\end{pmatrix} \text{;}
-\end{equation*}
-
-\section{Matrix Entries}
-\subsection{Capacitor as Shunt}
-
-and the matrix entries
-\begin{align}
-	m_{n,k} = 
-	\begin{cases}
-		L_{n}~C_{k} \quad &\text{if} ~ n \leq k ~\text{,}\\[1ex]
-		0 \quad &\text{else, }
-	\end{cases} \\
-	d_{n,k} = 
-	\begin{cases}
-		R_{n}~C_{k} \quad &\text{if} ~ n \leq k ~\text{,}\\[1ex]
-		0 \quad &\text{else}
-	\end{cases}
-\end{align}
-and 
-\begin{align*}
-	s_{n,k} = 
-	\begin{cases}
-		1 \quad &\text{if} ~ n = k ~\text{,}\\[1ex]
-		-1 \quad &\text{if} ~ n = k+1 ~\text{,}\\[1ex]
-		0 \quad &\text{else.}
-	\end{cases}
-\end{align*}
-
-\subsection{Resistor as Shunt}
-
-\begin{align*}
-	m_{n,k} = 
-	\begin{cases}
-		\frac{L_{n}}{R_{k}} \quad &\text{if} ~ n \leq k ~\text{,}\\[1ex]
-		0 \quad &\text{else}
-	\end{cases}
-\end{align*}
-
-\begin{align*}
-	d_{n,k} = 
-	\begin{cases}
-		1 \quad &\text{if} ~ n = k ~\text{,}\\[1ex]
-		-1 \quad &\text{if} ~ n = k+1 ~\text{,}\\[1ex]
-		0 \quad &\text{else}
-	\end{cases}
-\end{align*}
-
-\begin{align*}
-	s_{n,k} = 
-	\begin{cases}
-		\left[R_{k} C_{n} \right]^{-1} \quad &\text{if} ~ n \leq k ~\text{,}\\[1ex]
-		0 \quad &\text{else}
-	\end{cases}
-\end{align*}
-
-
-\subsection{Inductor as Shunt}
 
 % Idee: Tabelle mit M, D, S für unterschiedliche Schaltungen
 
