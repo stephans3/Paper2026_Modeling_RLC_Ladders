@@ -102,23 +102,56 @@
 	%% write paper - content as usual
 	
 \section*{Introduction}
-\begin{itemize}
-	\item Single circuits like RC and LC circuits are classic examples from school classes, e.g. physics to academic courses, e.g. control eng.. Not only for to describe the electrical behavior, but also emphasize connections to other scientific domains, e.g. waves.
-	\item Single circuits in control eng. and system theory are used to exemplify the modeling via transfer functions. For simple circuits this approach is easy, but it becomes more difficult for larger circuits. They are used to introduce electronic filters, RC is low-pass; Bode plot.
-	\item Electronic filter design; Cauer topology
-	\item Matlab: \url{https://www.mathworks.com/help/rf/ref/lcladder.html}
-	\item Telegrapher's equation
-	\item Exists a lot of literature for frequency-based modeling
-	\item In time domain standard approach is to build with Kirchhoff laws a differential-algebraic system of equations, see [tischendorf2001mathematical];
-	\item Fractional order systems: Ewa PIOTROWSKA
-	\item Port-Hamiltonian Systems, Dynamic Mode Decomposition [Daniel]
-	\item Here: modeling via ordinary differential equations; second order differential equation
-	\begin{equation}
-		M \ddot{z}(t) + D \dot{z}(t) + S z(t) = G_{0} u(t) + G_{1} \dot{u}(t) + G_{2} \ddot{u}(t)
-	\end{equation}
-	\item Julia implementation; simulation	
-	\item Focus here: main branch 2 series elements; shunt one element; in particular series of R \& L + shunt C
-\end{itemize}	
+
+%\begin{enumerate}
+%	\item Simple circuits
+%	\item Control theory: modeling of transfer functions and state space models
+%	\item Inductors and Capacitors as energy storage: first-order and second-order systems
+%	\item Concatenation of simple circuits increases number of energy storages and model order and it leads to a ladder 
+%	\item Modern approaches to model large circuits ... modified nodal analysis, see \cite{book:najm2010circuit} \cite{article:tischendorf1998topological,article:marz2003finding}
+%	\item MNA and port-Hamiltonian modeling \cite{article:gunther2020dynamic, article:gernandt2021porthamiltonian}
+%\end{enumerate}
+
+Simple circuits consisting of few electrical elements like resistors, capacitors and conductors are standard examples in school and academic courses. They are used to study fundamental concepts like charging behavior or oscillations in physics, electrical engineering and control theory. Capacitors (abbreviated as C) and inductors (abbr. as L) store electric and magnetic energy, in contrast to resistors (abbr. as R). Circuits with resistors and one capacitor or one inductor (we call them RC or RL circuit) are used to exemplify charging and discharging dynamics, which correspond to first-order differential equations. If more than one energy storage is included then we yield higher-order differential equations and they may show oscillatory dynamics. 
+
+In case of a small circuit with only few elements, the mathematical model may be derived with standard nodal analysis by evaluating Kirchhoff's voltage and current law. However, this approach tends be quite inefficient if a circuit contains many components. To solve this problem, the modified nodal analysis has been developed to model large scale circuits as differential-algebraic equations (abbr. as DAE) in a systematic way, see \cite[p. 27 ff.]{book:najm2010circuit} \cite{article:tischendorf1998topological,article:marz2003finding}.
+
+
+
+
+
+
+%like, fundamentals of physics, electrical engineering and control theory. These circuits are not limited to describe an electrical system, but also emphasize connections to other scientific domains, e.g. to study wave phenomena {\color{red} CITE!!} or more abstract models like port-Hamiltonian systems {\color{red} CITE!!}. In control and systems theory such simple exemplify the modeling of first-order and second-order systems via transfer functions.
+
+
+%Modeling of circuits and the numerical analysis of the resulting systems in  , i.e. with modified nodal analysis 
+%in the book \cite{book:najm2010circuit}
+%
+%The modeling of electrical ladder circuits also connected to machine learning like data-driven model discovery {\color{red} CITE!!} and dynamic mode decomposition \cite{article:peters2023dynamic}.
+%
+%machine learning techniques connected with the aforementioned modified nodal analysis 
+%\cite{article:galetzka2023data}, port-Hamiltonian modeling \cite{article:neary2025neural} and ... (Daniel: DMD)
+
+%classes, e.g. physics to academic courses, e.g. control eng.. Not only for to describe the electrical behavior, but also emphasize connections to other scientific domains, e.g. waves. Single circuits in control eng. and system theory are used to exemplify the modeling via transfer functions. For simple circuits this approach is easy, but it becomes more difficult for larger circuits. They are used to introduce electronic filters, RC is low-pass; Bode plot.
+
+%
+%\begin{itemize}	
+%	\item Single circuits like RC and LC circuits are classic examples from school classes, e.g. physics to academic courses, e.g. control eng.. Not only for to describe the electrical behavior, but also emphasize connections to other scientific domains, e.g. waves.
+%	\item Single circuits in control eng. and system theory are used to exemplify the modeling via transfer functions. For simple circuits this approach is easy, but it becomes more difficult for larger circuits. They are used to introduce electronic filters, RC is low-pass; Bode plot.
+%	\item Electronic filter design; Cauer topology
+%	\item Matlab: \url{https://www.mathworks.com/help/rf/ref/lcladder.html}
+%	\item Telegrapher's equation
+%	\item Exists a lot of literature for frequency-based modeling
+%	\item In time domain standard approach is to build with Kirchhoff laws a differential-algebraic system of equations, see [tischendorf2001mathematical];
+%	\item Fractional order systems: Ewa PIOTROWSKA
+%	\item Port-Hamiltonian Systems, Dynamic Mode Decomposition [Daniel]
+%	\item Here: modeling via ordinary differential equations; second order differential equation
+%	\begin{equation}
+%		M \ddot{z}(t) + D \dot{z}(t) + S z(t) = G_{0} u(t) + G_{1} \dot{u}(t) + G_{2} \ddot{u}(t)
+%	\end{equation}
+%	\item Julia implementation; simulation	
+%	\item Focus here: main branch 2 series elements; shunt one element; in particular series of R \& L + shunt C
+%\end{itemize}	
 	
 \section{Circuit Modeling}
 
@@ -516,7 +549,7 @@ We collect the equations of the shunt voltages, e.g. Eq.  (\ref{eq:rl-c_shunt_od
 \end{equation}
 with matrices $M = \left[ m_{n,k} \right]$, $D = \left[ d_{n,k} \right]$ and  $S = \left[ s_{n,k} \right]$, and vectors $z$ as in Eq. \eqref{eq:z_voltages_shunt} and  $G = [1, 0, \ldots, 0]^{\top}$. The indices of our matrix elements denote a row $n\in \{1,\ldots,N\}$ and column $k\in \{1,\ldots,N\}$. This index notation refers to the indices in the voltage differential equations, e.g. Eq. (\ref{eq:rl-c_shunt_ode_n}, \ref{eq:rl-c_shunt_ode_0}) etc. The input signal $\mu(t)$ identifies either $u(t)$ for circuit \ref{fig:cascaded_rlc_circuits} (a), $\partial_{t} u(t) = \dot{u}(t)$  for circuit (b) or  $\partial_{t}^2 u(t) = \ddot{u}(t)$ for circuit (c).
 
-The symbols of these matrices, $M$, $D$ and $S$, refer to the mass, damping and stiffness in mechanical systems. Our modeling approach of the second-order systems results in two types of matrices: upper triangular shapes and lower finite difference stencils, see the matrix shapes in Fig. \ref{fig:matrix_shapes}. The upper triangular matrices have a shape like
+The symbols of these matrices, $M$, $D$ and $S$, refer to the mass, damping and stiffness in mechanical systems. Our modeling approach of the second-order systems results in two types of matrices: upper triangular shapes and lower finite difference stencils, see the matrix shapes in Fig. \ref{fig:matrix_shapes}. The upper triangular matrices have a shape as
 \begin{equation}
 	\tilde{T} = 
 	\begin{pmatrix}
@@ -528,7 +561,7 @@ The symbols of these matrices, $M$, $D$ and $S$, refer to the mass, damping and 
 	\end{pmatrix}
 	\label{eq:triangular_matrix} 
 \end{equation}
-where our coefficients $(a_{n}, b_{n})$ stand for the related electrical coefficients, $R_{n}$, $L_{n}$, $C_{n}$ and their reciprocals; and the finite difference stencil is
+where our coefficients $(a_{n}, b_{k})$ with $n,k \in \{1,\ldots,N\}$ stand for the related electrical coefficients and their reciprocals, see Equations (\ref{eq:rl-c_shunt_ode_n}, \ref{eq:rl-c_shunt_ode_0}), (\ref{eq:lc-r_shunt_ode_n}, \ref{eq:lc-r_shunt_ode_0}) and (\ref{eq:rc-l_shunt_ode_n},\ref{eq:rc-l_shunt_ode_0}), and Table \ref{table:triangular_matrix_values}. The finite difference stencil is
 \begin{equation*}
 	\tilde{F} = 
 	\begin{pmatrix}
@@ -538,9 +571,29 @@ where our coefficients $(a_{n}, b_{n})$ stand for the related electrical coeffic
 		\vdots &			  &     -1  & 1 &  0 \\
 		0 &	\cdots		  &     0   & -1  & 1 
 	\end{pmatrix} 
+	\textbf{.}
 	\label{eq:finite_diff_stencil} 
 \end{equation*}
 The matrix entries for each circuit type are noted in Table \ref{table:overview_matrix_entries}. The triangular matrix structure corresponds to a spatially discrete integration and the finite difference shape to a differentiation.  We assume, $R_{n}$, $L_{n}$, $C_{n} \in \mathbb{R}_{>0} \setminus \{\infty\}$ and so the resulting triangular matrices are invertible. Hence, we are able to reformulate the second-order system via inverse matrix multiplication as first-order system. 
+
+\begin{table}[b]
+	\renewcommand{\arraystretch}{1.3}
+	\centering
+	\caption{\MakeUppercase{Triangular Matrix Corresponding Values}}
+	\begin{tabular}{l l l l}
+		\toprule
+		Shunt & Matrix & $a_{n}$ & $b_{k}$ \\
+		\midrule
+		Capacitor & M & $L_{n}$ & $C_{k}$	\\
+		& D & $R_{n}$ & $C_{k}$ \\ 
+		Resistor & M & $L_{n}$ & $R_{k}^{-1}$ \\ 
+		& S & $C_{n}^{-1}$ & $R_{k}^{-1}$ \\ 
+		Inductor & D & $R_{n}^{-1}$ & $L_{k}^{-1}$ \\
+		& S & $C_{n}^{-1}$ & $L_{k}^{-1}$ \\ 
+		\bottomrule
+	\end{tabular}
+	\label{table:triangular_matrix_values}
+\end{table}
 
 
 \begin{figure}[t!]
@@ -836,6 +889,73 @@ where the values of the $n$-th row and column coincide.
 	\label{fig:matrix_multiplication}
 \end{figure}
 
+\section{Simulation Examples}
+
+\begin{enumerate}
+	\item Describing circuits
+	\item 2nd order system model: matrices + input signals
+	\item 1st order: matrices + output signal
+\end{enumerate}
+
+For each proposed ladder type, we assume an example consisting of ten sub-circuits. The resistor, capacitor and inductor values  are equal for all sub-circuits, they are listed in Table \ref{table:simulation_parameters}. As we have equal component values, the triangular matrices for each ladder type are filled with ones and scaled as
+\begin{equation*}
+	\tilde{T} = a~b ~
+	\begin{pmatrix}
+		1 & \ldots & 1 \\
+		  & \ddots & \vdots \\
+		 & & 1
+	\end{pmatrix} 
+	\textbf{.}
+\end{equation*}
+The multipliers of the scaling $a\cdot b$ are listed in Table \ref{table:triangular_matrix_values}, e.g. we have a scaling $\frac{L}{R}$ of matrix $M$ for a ladder with resistor as shunt.
+
+\begin{table}[b]
+	\renewcommand{\arraystretch}{1.3}
+	\centering
+	\caption{\MakeUppercase{Simulation Parameters}}
+	\begin{tabular}{l l l}
+		\toprule
+		Param. & Value & Description \\
+		\midrule
+		N & 10 & Num. of Circuits\\
+		$R_{n}$ & 2 & Resistance in $[\Omega]$ \\
+		$C_{n}$ & 3 & Capacitance in $[F]$\\
+		$L_{n}$ & 5 & Inductance in $[H]$\\
+		\bottomrule
+	\end{tabular}
+	\label{table:simulation_parameters}
+\end{table}
+
+In case of ladder type (b) and (c), see Fig. \ref{fig:cascaded_rlc_circuits}, we need to differentiate the input voltage once and twice. We consider a two-sided chirp signal which starts and terminates at zero Volt and its first and second derivative, see Fig. \ref{fig:input_output_results} (a). We design an oscillation 
+\begin{equation}
+	f(t,p) = \sin\left(p~\pi~g(t,p)\right) \label{eq:input_base_oscillation}
+\end{equation}
+and with an embedded function
+\begin{equation*}
+	g(t,p) := \tanh\left(\frac{t}{p}\right)
+\end{equation*}
+We choose further $p=100$ and shift the time by $t \rightarrow t-700$ to yield the original voltage signal
+\begin{equation*}
+	u(t) = f(t-700,100) \textbf{.}
+\end{equation*}
+We differentiate symbolically the oscillation function, Eq. \eqref{eq:input_base_oscillation}, once to yield the first derivative
+\begin{equation*}
+	\partial_{t} f(t,p) = ~ \pi~\cos\left(p~\pi~g(t,p)\right)~ \left[1-g(t,p)^2\right]
+\end{equation*}
+and twice for the second derivative
+\begin{align*}
+	&\partial_{t}^2 f(t,p) =~ -\pi^2 ~ \sin\left(p~\pi~g(t,p)\right) ~ \left[1-g(t,p)^2\right]^2 \nonumber \\
+	&\qquad - 2\frac{\pi}{p}~\cos\left(p~\pi~g(t,p)\right)~\left[g(t,p)-g(t,p)^3\right]
+\end{align*}
+Again, we set $p=100$ and the time shift as above for the first and second derivative to yield $\partial_{t} u(t)$ and $\partial_{t}^2 u(t)$.
+
+%\begin{align*}
+%	u(t) = f(t-700,100) \\
+%	\dot{u}(t) = \partial_{t} f(t-700,100) \\
+%	\ddot{u}(t) = \partial_{t}^2 f(t-700,100) 
+%\end{align*}
+
+
 \begin{figure*}[t!]
 	\centering
 	\subfloat[Input Signals]{\includegraphics[width=0.99\columnwidth]{images/input_signal}}\quad
@@ -877,6 +997,90 @@ This article is inspired by student projects and theses at the University of App
 	\end{tabular}
 	\label{table:general_overview}
 \end{table*}
+
+
+
+\begin{thebibliography}{99}
+	{\small\fontsize{9.4}{1.2em}\selectfont
+		\setlength{\parskip}{-0.5mm}
+		\addcontentsline{toc}{section}{References}\vspace{-3mm}
+		%
+		
+		\bibitem{book:najm2010circuit}\raggedright
+		Najm F N. {\itshape Circuit simulation}. New Jersey: Wiley-IEEE Press; 2010. 318.
+		
+		\bibitem{article:tischendorf1998topological}\raggedright
+		Tischendorf, C. Topological index‐calculation of DAEs in circuit simulation. {\itshape ZAMM‐J. of Applied Mathematics and Mechanics/Zeitschrift für Angewandte Mathematik und Mechanik}. 1998; 78(S3): 1103--1104.
+		
+		\bibitem{article:marz2003finding}\raggedright
+		M{\"a}rz R,  Schwarz  D E, Feldmann U, Sturtzel S, Tischendorf C. Finding beneficial DAE structures in circuit simulation. In: J{\"a}ger W, Krebs HJ, editors.  {\itshape Mathematics—Key Technology for the Future: Joint Projects between Universities and Industry}. 1. Heidelberg: Springer Berlin; 2003. p 413--428.
+			
+		
+		\bibitem{article:gernandt2021porthamiltonian}\raggedright
+		Gernandt H, Haller F E, Reis T, van der Schaft A J.	Port-Hamiltonian formulation of nonlinear electrical circuits. 
+		{\itshape J. of Geometry and Physics}. 2021; 159. doi: {10.1016/j.geomphys.2020.103959},
+		
+		\bibitem{article:gunther2020dynamic}\raggedright
+		G{\"u}nther M, Bartel A, Jacob B, Reis T. Dynamic iteration schemes and port-Hamiltonian formulation in coupled DAE circuit simulation. {\itshape arXiv preprint arXiv:2004.12951}. 2020.
+		
+		\bibitem{article:galetzka2023data}\raggedright
+		Galetzka A, Loukrezis D, De Gersem H. Data-driven modified nodal analysis circuit solver. {\itshape arXiv preprint arXiv:2303.03401}. 2023.
+		
+		\bibitem{article:neary2025neural}\raggedright
+		Neary C, Tsao N, Topcu U. Neural port-hamiltonian differential algebraic equations for compositional learning of electrical networks. {\itshape Proceedings of the 2025 IEEE 64th Conference on Decision and Control (CDC)}. 2025: 2097--2103. doi: {10.1109/CDC57313.2025.11312148}.
+
+		\bibitem{article:peters2023dynamic}\raggedright
+		Peters D, Scholz S, Berger L. Dynamic Mode Decomposition for Cascaded Electrical Circuits. {\itshape ICoMS '23: Proceedings of the 2023 6th International Conference on Mathematics and Statistics}. 2023: 147--151. doi: {10.1145/3613347.3613370}.		
+		
+		\bibitem{article:piotrowska2021time}\raggedright
+		Piotrowska E, Rogowski K.  Time-Domain Analysis of Fractional Electrical Circuit Containing Two Ladder Elements. {\itshape Electronics}. 2021; 10(4). doi:{10.3390/electronics10040475}.
+		
+		\bibitem{article:greco2013modeling}\raggedright
+		Greco A, Barroso J, Rossi J. Modeling and Analysis of Ladder-Network Transmission Lines with Capacitive and Inductive Lumped Elements. {J. of Electromagnetic Analysis and Applications}. 2013; 5(5): 213--218. doi: 10.4236/jemaa.2013.55034. 
+		
+		\bibitem{article:chen2020electrical}\raggedright
+		Chen HX, Yang L. Electrical characteristics of n-ladder network with external load. {\itshape Indian J. of Physics}. 2020; 94(6): 801--809. doi: {10.1007/s12648-019-01508-5}.
+		
+		\bibitem{software:schwerdtner2025port}\raggedright
+		Schwerdtner P, Sabbadini N, Nicodemus J. PortHamiltonianBenchmarkSystems.jl. v0.2.0. 2025. url: {\url{https://github.com/Algopaul/PortHamiltonianBenchmarkSystems.jl}}.
+		
+		
+%		\bibitem{ref_1}\raggedright
+%		Author, A. {\itshape Title of his published book}. Edition. City of
+%		Publisher: Abbrev. of Publisher; year. total pages of
+%		book p.
+%		\bibitem{ref_2}\raggedright
+%		Author2 A, Author3 BC, Author4 D, editors. {\itshape Title of
+%			published book}. 8th ed. City of Publisher: Abbrev. of
+%		Publisher; year. 1234 p.
+%		\bibitem{ref_3}\raggedright
+%		Author2 B, Author3 CA. Title of the chapter within the
+%		book. In: Author4 D, Author5 E, editors. {\itshape Title of published Book}. 
+%		Edition. City of Publisher: Abbrev. of Publisher;
+%		year. p 1234--total pages of chapter.
+%		\bibitem{ref_4}\raggedright
+%		Author, A. {\itshape Title of Dissertation} [dissertation]. 
+%		[Departement, (abrev. State)]. Name of University; year. doi: doi
+%		number.
+%		\bibitem{ref_5}\raggedright
+%		Author1 AB, Author2 C. Title of paper. In Editor1 A,
+%		Editor2 B, editors. Title of book. {\itshape Number and Name of
+%			the Conference}; 2014 Jan; Place of Conference. Place of
+%		Publication: publisher. page-page. doi: doi number.
+%		\bibitem{ref_6} \raggedright
+%		Author A, Author2 B. Title of Article. {\itshape Journal Title ab-
+%			breviation}. year; volume(issue): page--page. doi: doi
+%		number.
+	}
+\end{thebibliography}
+
+
+
+
+
+
+
+
 
 
 
