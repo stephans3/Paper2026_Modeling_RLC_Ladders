@@ -519,12 +519,13 @@ We differentiate Eq. \eqref{eq:rc-l_volt_main} two times and we insert $\partial
 	=&~ \left[R_n ~ \partial_{t} + \frac{1}{C_{n}} \right]  \left[ \sum_{k=n}^{N} \frac{z_{k}(t)}{L_{k}}  \right] \text{.}
 \end{align*}
 In a analog way as before, we note the differential equation of the $n-th$ circuit as
-\begin{equation}
-	0 =~  \partial_{t}^2 \left[z_{n}(t) - z_{n-1}(t)\right] + \sum_{k=n}^{N} \left[ \frac{\partial_{t} z_{k}(t)}{R_{n} ~ L_{k}} + \frac{z_{k}(t)}{L_{k}~C_{n}} \right] \label{eq:rc-l_shunt_ode_n}
-\end{equation}
+\begin{align}
+	0 =&~  \partial_{t}^2 \left[z_{n}(t) - z_{n-1}(t)\right] \nonumber \\
+	&\quad + \sum_{k=n}^{N} \left[ \frac{R_{n}}{L_{k}}~\partial_{t} z_{k}(t) + \frac{z_{k}(t)}{L_{k}~C_{n}} \right] \label{eq:rc-l_shunt_ode_n}
+\end{align}
 and for the first circuit, we note
 \begin{equation}
-	\partial_{t}^2 u(t) =~  \partial_{t}^2 z_{1}(t) + \sum_{k=n}^{N} \left[ \frac{\partial_{t} z_{k}(t)}{R_{1} ~ L_{k}} + \frac{z_{k}(t)}{L_{k}~C_{1}} \right] \text{.} \label{eq:rc-l_shunt_ode_0}
+	\partial_{t}^2 u(t) =~  \partial_{t}^2 z_{1}(t) + \sum_{k=n}^{N} \left[ \frac{R_{1}}{L_{k}}~\partial_{t} z_{k}(t) + \frac{z_{k}(t)}{L_{k}~C_{1}} \right] \text{.} \label{eq:rc-l_shunt_ode_0}
 \end{equation}
 
 
@@ -536,7 +537,7 @@ and for the first circuit, we note
 \section{System of Differential Equations}
 
 \begin{itemize}
-	\item Instead of $R$ and $L$ maybe $\ell$ $r$
+	\item Instead of $R$ and $L$ maybe $\ell$ $r$ $\mathcal{c}$
 	\item First-order systems: naming of $A_{1}$ and $A_{2}$ >> $P=[p_{n,k}]$ and $Q=[q_{n,k}]$??
 \end{itemize}
 
@@ -551,7 +552,7 @@ with matrices $M = \left[ m_{n,k} \right]$, $D = \left[ d_{n,k} \right]$ and  $S
 
 The symbols of these matrices, $M$, $D$ and $S$, refer to the mass, damping and stiffness in mechanical systems. Our modeling approach of the second-order systems results in two types of matrices: upper triangular shapes and lower finite difference stencils, see the matrix shapes in Fig. \ref{fig:matrix_shapes}. The upper triangular matrices have a shape as
 \begin{equation}
-	\tilde{T} = 
+	\mathbf{T}_{a,b} = 
 	\begin{pmatrix}
 		a_{1} b_{1} & a_{1} b_{2} & \cdots &  a_{1} b_{N-1} & a_{1} b_{N} \\
 		0 			& a_{2} b_{2} & \cdots &  a_{2} b_{N-1} & a_{2} b_{N} \\
@@ -585,10 +586,10 @@ The matrix entries for each circuit type are noted in Table \ref{table:overview_
 		Shunt & Matrix & $a_{n}$ & $b_{k}$ \\
 		\midrule
 		Capacitor & M & $L_{n}$ & $C_{k}$	\\
-		& D & $R_{n}$ & $C_{k}$ \\ 
+		& D & $R_{n}$ & $C_{k}$ \\[1.5ex] 
 		Resistor & M & $L_{n}$ & $R_{k}^{-1}$ \\ 
-		& S & $C_{n}^{-1}$ & $R_{k}^{-1}$ \\ 
-		Inductor & D & $R_{n}^{-1}$ & $L_{k}^{-1}$ \\
+		& S & $C_{n}^{-1}$ & $R_{k}^{-1}$ \\[1.5ex] 
+		Inductor & D & $R_{n}$ & $L_{k}^{-1}$ \\
 		& S & $C_{n}^{-1}$ & $L_{k}^{-1}$ \\ 
 		\bottomrule
 	\end{tabular}
@@ -618,7 +619,7 @@ The matrix entries for each circuit type are noted in Table \ref{table:overview_
 		\draw[line width=1.0] (0.2+3*\dx,0+\dy) -- (0.1+3*\dx,0+\dy) -- (0.1+3*\dx,1+\dy) -- (0.2+3*\dx,1+\dy);
 		\draw[line width=1.0] (0.3+3*\dx,0+\dy) -- (0.4+3*\dx,0+\dy) -- (0.4+3*\dx,1+\dy) -- (0.3+3*\dx,1+\dy);
 		\node at (0.25+3*\dx,0.8+\dy) {\large $1$};
-		\node at (0.6+3*\dx,0.52+\dy) {\Large $\mathbf{\ddot{u}}$};
+		\node at (0.6+3*\dx,0.52+\dy) {\Large $\mathbf{u}$};
 		
 		\node[right] at (1.0, -0.5+\dy) {(a) Capacitor as shunt};
 		
@@ -710,11 +711,11 @@ Subsequently, we reformulate Eq. \eqref{eq:rlc_second_order_1} to yield a first-
 \end{equation}
 where we specify the matrices 
 \begin{equation}
-P = -M^{-1}~S \quad \text{and} \quad Q := -M^{-1}~D	\label{eq:first_order_submatrices_P_Q}
+A_{I} = -M^{-1}~S \quad \text{and} \quad A_{II} := -M^{-1}~D	\label{eq:first_order_submatrices_P_Q}
 \end{equation}
 and vector $\tilde{G}:= M^{-1}~G$, and we note secondly 
 \begin{equation*}
-	\ddot{z}(t) = P ~ z(t)  + Q ~ \dot{z}(t) + \tilde{G} ~ z(t) \text{.}
+	\ddot{z}(t) = A_{I} ~ z(t)  + A_{II} ~ \dot{z}(t) + \tilde{G} ~ z(t) \text{.}
 \end{equation*}
 We introduce the new states $x_{1}(t) = z(t)$, $x_{2}(t) = \partial_{t} z(t)$ and we formulate the state space as 
 \begin{align}
@@ -725,7 +726,7 @@ We introduce the new states $x_{1}(t) = z(t)$, $x_{2}(t) = \partial_{t} z(t)$ an
 	=
 	\begin{pmatrix}
 		0 & I \\
-		P & Q
+		A_{I} & A_{II}
 	\end{pmatrix}
 	\begin{pmatrix}
 		{x}_{1} \\	
@@ -736,14 +737,14 @@ We introduce the new states $x_{1}(t) = z(t)$, $x_{2}(t) = \partial_{t} z(t)$ an
 		0  \\
 		\tilde{G}
 	\end{pmatrix}
-	u(t)\text{.}
+	\mu(t)\text{.}
 \end{align}
 If matrix $M$ in Eq. (\ref{eq:rlc_second_order_1},\ref{eq:rlc_second_order_2}) is not well conditioned, i.e. $M$ has a large condition number $\kappa = \frac{\max_{i} |\lambda_{i}|}{\min_{i} |\lambda_{i}|} \gg 1$ with eigenvalues $\lambda_{i}$ and $i \in [1,\ldots,2N]$, then a numerical computation of sub-matrices $P$ and $Q$ might be prone to numerical errors; and hence we need to have a closed form of these sub-matrices. In Fig. \ref{fig:matrix_multiplication}, we sketch the matrix multiplications from Eq. \eqref{eq:first_order_submatrices_P_Q} for the discussed matrix shapes in Eq. (\ref{eq:triangular_matrix}, \ref{eq:finite_diff_stencil}); and subsequently, we discuss these computations in detail. 
 
 \subsection*{Inverse Triangular Matrix and Finite Difference Stencil}
 To compute sub-matrices $P$ and $Q$ for circuit types (a) and (b), we need to find the inverse of their triangular matrix $M$. It has the shape as noted in Eq. \eqref{eq:triangular_matrix} and its inverse is found as the upper finite difference stencil shape 
 \begin{align*}
-	\tilde{T}^{-1} = 
+	\mathbf{T}^{-1} = 
 	\begin{pmatrix}
 		\frac{1}{a_{1} ~ b_{1}} & \frac{-1}{a_{2} ~ b_{1}} & 0  						& \cdots & 0 \\[1ex]
 		0 						 &   \frac{1}{a_{2} ~ b_{2}} & \frac{-1}{a_{3} ~ b_{2}} &  & \vdots \\
@@ -752,17 +753,94 @@ To compute sub-matrices $P$ and $Q$ for circuit types (a) and (b), we need to fi
 		0  & \cdots 	& &  			0			   & \frac{1}{a_{N} ~ b_{N}} 
 	\end{pmatrix} \text{.}
 \end{align*}
-A multiplication of $\tilde{T}^{-1}$ with a lower finite difference stencil, see Fig. \ref{fig:matrix_multiplication} (a), results in a tridiagonal shaped matrix as in Eq. \eqref{eq:finite_diff_stencil} with a $n$-th row vector elements 
+A multiplication of $\mathbf{T}^{-1}$ with a lower finite difference stencil, see Fig. \ref{fig:matrix_multiplication} (a), results in a tridiagonal shaped matrix as in Eq. \eqref{eq:finite_diff_stencil} with a $n$-th row vector elements 
 \begin{equation*}
 	\left[ \frac{-1}{a_{n}~ b_{n}},  \underbrace{\frac{1}{a_{n}~ b_{n}} + \frac{1}{a_{n+1}~ b_{n}}}_{n = k ~~ \text{(row = col.)}}, \frac{-1}{a_{n+1}~ b_{n}}\right] \text{.}
 \end{equation*}
 In case of circuit type (a), we compute sub-matrix $P$ with this matrix multiplication, while for circuit type (b), we find sub-matrix $Q$ with such a tridiagonal shape.
 %{\color{red} with an upper triangular matrix, like matrix $S$ for circuit (a) or $D$ for circuit (b), results in an upper triangular matrix again; where a multiplication with the finite difference stencil, $S$ for circuit (a) or $D$ for circuit (b), results in a tridiagonal shaped matrix. }
 
+\begin{equation}
+ 	\mathbf{L}_{\alpha,\beta} := -\mathbf{T}_{a,b}^{-1} ~\cdot~ \mathbf{F}
+\end{equation}
+we yield a Laplacian matrix (side)
+\begin{equation}
+	\mathbf{L}_{\alpha,\beta} =
+	\begin{pmatrix}
+		\gamma_{1} & \beta_{1} \\
+		\alpha_{2} & \gamma_{2} & \beta_{2} \\
+		& \ddots & \ddots & \ddots \\
+		& & \alpha_{N-1} & \gamma_{N-1} & \beta_{N-1} \\
+		& & & \alpha_{N} & -\alpha_{N}
+	\end{pmatrix}
+\end{equation}
+with sub-diagonal entries
+\begin{equation}
+	\alpha_{n} = \frac{1}{a_{n}~ b_{n}} ~ \text{,} \quad 
+	\beta_{n} =  \frac{1}{a_{n+1}~ b_{n}} \\
+\end{equation}
+and diagonal elements
+\begin{equation*}
+	\gamma_{n} = -\left[\alpha_{n}+\beta_{n}\right]
+\end{equation*}
+for $n\in\{1,\ldots,N\}$.
+
+
+\begin{equation}
+	\mathbf{L} = \mathbf{T}^{-1} ~ \tilde{F} % Laplacian matrix
+\end{equation}
+
+\begin{equation}
+	\mathbf{U} = \mathbf{T}^{-1} ~ \mathbf{T} % Triangular matrix
+\end{equation}
+
+\begin{equation}
+	\mathbf{W} = \tilde{F}^{-1} ~ \mathbf{T} % Full / dense matrix
+\end{equation}
+
+
+
+\begin{equation}
+	P = \begin{cases}
+		\mathbf{T}^{-1} ~ \tilde{F} \text{,} \quad \text{for circuit type (a),} \\
+		\mathbf{T}^{-1} ~ \mathbf{T} \text{,} \quad \text{for circuit type (b),} \\
+		\tilde{F}^{-1} ~ \mathbf{T} \text{,} \quad \text{for circuit type (c)}
+	\end{cases}
+\end{equation}
+
+\begin{equation}
+	Q = \begin{cases}
+		\mathbf{T}^{-1} ~ \mathbf{T} \text{,} \quad \text{for circuit type (a),} \\
+		\mathbf{T}^{-1} ~ \tilde{F} \text{,} \quad \text{for circuit type (b),} \\
+		\tilde{F}^{-1} ~ \mathbf{T} \text{,} \quad \text{for circuit type (c)}
+	\end{cases}
+\end{equation}
+
 \subsection*{Inverse Triangular and Triangular Matrix}
-We consider the inverse triangular matrix $\tilde{T}^{-1}$ as above and we specify the second upper triangular matrix as $U = \left[\alpha_{n}~b_{k}\right]$ analog to $T$ in  Eq. \eqref{eq:triangular_matrix}, with equal $b_{k}$ but different $a_{n} \neq \alpha_{n}$. We evaluate the multiplication elementwise as 
+
+\begin{equation}
+	P_{\alpha,\beta} := - \mathbf{T}_{a,b}^{-1} ~ \cdot ~ \mathbf{T}_{\tilde{a},\tilde{b}}
+\end{equation}
+
+\begin{equation}
+	P_{\alpha,\beta} = 
+	\begin{pmatrix}
+		\alpha_{1} & \beta_{1,2} &  \beta_{1,3} & \ldots &   \beta_{1,N} \\
+		& \alpha_{2} & \beta_{2,3} &  \ldots &  \beta_{2,N} \\
+		& & \ddots & \vdots \\
+		& & & \alpha_{N-1} & \beta_{N-1,N} \\
+		& & & & \alpha_{N}
+	\end{pmatrix}
+\end{equation}
+with diagonal elements
+\begin{equation}
+	\alpha_{n} = \frac{\tilde{a}_{n}}{a_{n}} \quad \text{and} \quad \beta_{n,k} = \left[\frac{\tilde{a}_{n}}{a_{n}} - \frac{\tilde{a}_{n+1}}{a_{n+1}} \right] \frac{\tilde{b}_{k}}{b_{n}}
+\end{equation}
+for 
+
+We consider the inverse triangular matrix $\mathbf{T}^{-1}$ as above and we specify the second upper triangular matrix as $U = \left[\alpha_{n}~b_{k}\right]$ analog to $T$ in  Eq. \eqref{eq:triangular_matrix}, with equal $b_{k}$ but different $a_{n} \neq \alpha_{n}$. We evaluate the multiplication elementwise as 
 \begin{align}
-	\left. \tilde{T}^{-1} \cdot U \right\lvert_{n,k} = 
+	\left. \mathbf{T}^{-1} \cdot U \right\lvert_{n,k} = 
 	\begin{cases}
 		\frac{\alpha_{n}}{a_{n}} \quad &\text{if} ~ n = k ~\text{,}\\[1ex]
 		\left[\frac{\alpha_{n}}{a_{n}} - \frac{\alpha_{n+1}}{a_{n+1}} \right] \frac{b_{k}}{b_{n}}\quad &\text{if} ~ n < k ~\text{,}\\[1ex]
@@ -771,11 +849,36 @@ We consider the inverse triangular matrix $\tilde{T}^{-1}$ as above and we speci
 \end{align}
 and so we have in general a triangular matrix. However, if we have a scaling $\alpha_{n} = \epsilon a_{n}$ for all $n \in \{1,\ldots,N\}$ with $\epsilon \in \mathbb{R}$, then we yield a pure diagonal matrix
 \begin{equation*}
-	\tilde{T}^{-1} \cdot U = \epsilon~I \text{.}
+	\mathbf{T}^{-1} \cdot U = \epsilon~I \text{.}
 \end{equation*}
 We emphasize that this matrix multiplication is relevant for circuit type (a) to yield sub-matrix $Q$; and for circuit type (b) to compute $P$.
 
 \subsection*{Inverse Finite Difference Stencil and Triangular Matrix}
+
+\begin{equation}
+	\mathbf{Q} := - \mathbf{F}^{-1} ~\cdot~ \mathbf{T}_{a,b}
+\end{equation}
+where $\mathbf{Q} = [q_{n,k}]$ and 
+\begin{equation}
+	q_{n,k} = b_{k} \sum_{i=1}^{\min\{n,k\}} a_{i}
+\end{equation}
+for $n,k \in \{1,\ldots,N\}$.
+
+\begin{equation}
+	\mathbf{Q} = 
+	\def\aa{\color{red}\alpha_{2}}
+	\def\ab{\color{red}\alpha_{N-1}}
+	\begin{pmatrix}
+		\alpha_{1} & \alpha_{1} & \alpha_{1} & \ldots & \alpha_{1} & \alpha_{1} \\
+		\alpha_{1} & \aa & \aa & \ldots & \aa & \aa \\
+		     & \aa & \alpha_{3} & \ldots & \alpha_{3} & \alpha_{3} \\
+		\vdots     & \vdots & \vdots & \ddots \\
+		\alpha_{1}& \aa & \alpha_{3} & & \ab & \ab \\
+		\alpha_{1} & \aa & \alpha_{3} & & \ab & \alpha_{N}
+	\end{pmatrix}
+\end{equation}
+
+
 The third matrix multiplication is only applied for the first-order systems of circuit type (c). Here, we invert the finite difference stencil $\tilde{F}$ and we obtain a lower triangular matrix
 \begin{equation*}
 	\tilde{F}^{-1} =
@@ -785,13 +888,13 @@ The third matrix multiplication is only applied for the first-order systems of c
 	 	1 &	\cdots	 &     1 
 	 \end{pmatrix} \text{.}
 \end{equation*}
-We multiply this lower triangular matrix with $\tilde{T}$ as in Eq. \eqref{eq:triangular_matrix} and we evaluate the results elementwise as
+We multiply this lower triangular matrix with $\mathbf{T}$ as in Eq. \eqref{eq:triangular_matrix} and we evaluate the results elementwise as
 \begin{equation}
-	\left. \tilde{F}^{-1} \cdot \tilde{T}  \right\rvert_{n,k} = b_{k} \sum_{i=1}^{\min\{n,k\}} a_{i} \text{.}
+	\left. \tilde{F}^{-1} \cdot \mathbf{T}  \right\rvert_{n,k} = b_{k} \sum_{i=1}^{\min\{n,k\}} a_{i} \text{.}
 \end{equation}
 If all values of $b_{n}$ are equal, then this matrix multiplication results in a shape
 \begin{equation*}
-	\tilde{F}^{-1} \cdot \tilde{T} =
+	\tilde{F}^{-1} \cdot \mathbf{T} =
 	\begin{pmatrix}
 		 & \text{---} & v_{1} & \text{---} & \\
 		| & & \text{---} & v_{2} & \text{---} \\
@@ -892,14 +995,16 @@ where the values of the $n$-th row and column coincide.
 \section{Simulation Examples}
 
 \begin{enumerate}
-	\item Describing circuits
-	\item 2nd order system model: matrices + input signals
-	\item 1st order: matrices + output signal
+	\item Describing circuits (Done)
+	\item 2nd order system model: matrices + input signals (Done)
+	\item 1st order: matrices (P,Q), 2nd order diff stencil, ..   
+	\item output signal 
 \end{enumerate}
 
 For each proposed ladder type, we assume an example consisting of ten sub-circuits. The resistor, capacitor and inductor values  are equal for all sub-circuits, they are listed in Table \ref{table:simulation_parameters}. As we have equal component values, the triangular matrices for each ladder type are filled with ones and scaled as
 \begin{equation*}
-	\tilde{T} = a~b ~
+	\mathbf{T} = \left(a~b\right) ~ \mathbf{\tilde{T}} \quad \text{with} \quad 
+	\mathbf{\tilde{T}} :=
 	\begin{pmatrix}
 		1 & \ldots & 1 \\
 		  & \ddots & \vdots \\
@@ -907,7 +1012,20 @@ For each proposed ladder type, we assume an example consisting of ten sub-circui
 	\end{pmatrix} 
 	\textbf{.}
 \end{equation*}
-The multipliers of the scaling $a\cdot b$ are listed in Table \ref{table:triangular_matrix_values}, e.g. we have a scaling $\frac{L}{R}$ of matrix $M$ for a ladder with resistor as shunt.
+The multipliers of the scaling $a\cdot b$ are listed in Table \ref{table:triangular_matrix_values}. Hence, we yield the differential equations
+\begin{equation}
+	(\ell~c)~\mathbf{T} ~ \ddot{z}(t) + (r~c)~\mathbf{T}~ \dot{z}(t) + \mathbf{\tilde{F}}~ z(t) = G~u(t)
+\end{equation}
+for circuit type (a) (capacitor as shunt), 
+\begin{equation}
+	\left(\frac{\ell}{r}\right)~\mathbf{T}~ \ddot{z}(t) + \mathbf{\tilde{F}}~\dot{z}(t) + \left(\frac{1}{r~c}\right)~\mathbf{T}~ z(t) = G~\dot{u}(t)
+\end{equation}
+for circuit type (b) (resistor as shunt) and
+\begin{equation}
+	\mathbf{\tilde{F}}~ \ddot{z}(t) + \left(\frac{r}{\ell}\right) ~ \mathbf{T} ~ \dot{z}(t) + \left(\frac{1}{\ell~c}\right) ~ \mathbf{T} ~ z(t) = G~\ddot{u}(t)
+\end{equation}
+for circuit type (c) (inductor as shunt). 
+
 
 \begin{table}[b]
 	\renewcommand{\arraystretch}{1.3}
@@ -966,6 +1084,34 @@ Again, we set $p=100$ and the time shift as above for the first and second deriv
 	\caption{Input signals and resulting states for Capacitor, Resistor and Inductor.}
 	\label{fig:input_output_results}
 \end{figure*}
+
+% A - 1st order ODE
+% B - 1st order ODE
+% C - 1st order ODE
+% D - 2nd order ODE
+% E - nein
+% F - Finite Diff Stencil
+% G - 2nd order ODE
+% H
+% I - Einheitsmatrix
+% J
+% K
+% L - Laplacian matrix: inv(T)~F
+% M - 2nd order ODE
+% N
+% O - nein
+% P - 1st order ODE
+% Q - 1st order ODE
+% R
+% S - 2nd order ODE
+% T - Triangular matrix
+% U
+% V
+% W
+% X - nein
+% Y - nein
+% Z - nein
+
 
 
 % Idee: Tabelle mit M, D, S für unterschiedliche Schaltungen
