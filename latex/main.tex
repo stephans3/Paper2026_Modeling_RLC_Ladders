@@ -563,8 +563,8 @@ The symbols of these matrices, $M$, $D$ and $S$, refer to the mass, damping and 
 	\label{eq:triangular_matrix} 
 \end{equation}
 where our coefficients $(a_{n}, b_{k})$ with $n,k \in \{1,\ldots,N\}$ stand for the related electrical coefficients and their reciprocals, see Equations (\ref{eq:rl-c_shunt_ode_n}, \ref{eq:rl-c_shunt_ode_0}), (\ref{eq:lc-r_shunt_ode_n}, \ref{eq:lc-r_shunt_ode_0}) and (\ref{eq:rc-l_shunt_ode_n},\ref{eq:rc-l_shunt_ode_0}), and Table \ref{table:triangular_matrix_values}. The finite difference stencil is
-\begin{equation*}
-	\tilde{F} = 
+\begin{equation}
+	\mathbf{F} = 
 	\begin{pmatrix}
 		1 & 0 & \cdots &  &  0\\
 		-1 			& 1 & 0 &   & \vdots  \\
@@ -574,7 +574,7 @@ where our coefficients $(a_{n}, b_{k})$ with $n,k \in \{1,\ldots,N\}$ stand for 
 	\end{pmatrix} 
 	\textbf{.}
 	\label{eq:finite_diff_stencil} 
-\end{equation*}
+\end{equation}
 The matrix entries for each circuit type are noted in Table \ref{table:overview_matrix_entries}. The triangular matrix structure corresponds to a spatially discrete integration and the finite difference shape to a differentiation.  We assume, $R_{n}$, $L_{n}$, $C_{n} \in \mathbb{R}_{>0} \setminus \{\infty\}$ and so the resulting triangular matrices are invertible. Hence, we are able to reformulate the second-order system via inverse matrix multiplication as first-order system. 
 
 \begin{table}[b]
@@ -726,7 +726,7 @@ We introduce the new states $x_{1}(t) = z(t)$, $x_{2}(t) = \partial_{t} z(t)$ an
 	=
 	\begin{pmatrix}
 		0 & I \\
-		A_{I} & A_{II}
+		A_{\mathrm{I}} & A_{\mathrm{II}}
 	\end{pmatrix}
 	\begin{pmatrix}
 		{x}_{1} \\	
@@ -739,12 +739,18 @@ We introduce the new states $x_{1}(t) = z(t)$, $x_{2}(t) = \partial_{t} z(t)$ an
 	\end{pmatrix}
 	\mu(t)\text{.}
 \end{align}
-If matrix $M$ in Eq. (\ref{eq:rlc_second_order_1},\ref{eq:rlc_second_order_2}) is not well conditioned, i.e. $M$ has a large condition number $\kappa = \frac{\max_{i} |\lambda_{i}|}{\min_{i} |\lambda_{i}|} \gg 1$ with eigenvalues $\lambda_{i}$ and $i \in [1,\ldots,2N]$, then a numerical computation of sub-matrices $P$ and $Q$ might be prone to numerical errors; and hence we need to have a closed form of these sub-matrices. In Fig. \ref{fig:matrix_multiplication}, we sketch the matrix multiplications from Eq. \eqref{eq:first_order_submatrices_P_Q} for the discussed matrix shapes in Eq. (\ref{eq:triangular_matrix}, \ref{eq:finite_diff_stencil}); and subsequently, we discuss these computations in detail. 
 
-\subsection*{Inverse Triangular Matrix and Finite Difference Stencil}
-To compute sub-matrices $P$ and $Q$ for circuit types (a) and (b), we need to find the inverse of their triangular matrix $M$. It has the shape as noted in Eq. \eqref{eq:triangular_matrix} and its inverse is found as the upper finite difference stencil shape 
+
+If matrix $M$ in Eq. (\ref{eq:rlc_second_order_1},\ref{eq:rlc_second_order_2}) is not well conditioned, i.e. $M$ has a large condition number $\kappa = \frac{\max_{i} |\lambda_{i}|}{\min_{i} |\lambda_{i}|} \gg 1$ with eigenvalues $\lambda_{i}$ and $i \in [1,\ldots,2N]$, then a numerical computation of sub-matrices $A_{\mathrm{I}}$ and $A_{\mathrm{II}}$ might be prone to numerical errors; and hence we need to have a closed form of these sub-matrices. In Fig. \ref{fig:matrix_multiplication}, we sketch the matrix multiplications from Eq. \eqref{eq:first_order_submatrices_P_Q} for the discussed matrix shapes in Eq. (\ref{eq:triangular_matrix}, \ref{eq:finite_diff_stencil}); and subsequently, we discuss these computations in detail. 
+
+In case of ladder type (a) and (b), we see that matrix $M$
+
+is a triangular matrix $\mathbf{T}_{a,b}$
+
+\subsection*{Inverse Triangular Matrix}
+To compute sub-matrices $A_{\mathrm{I}}$ and $A_{\mathrm{II}}$ for circuit types (a) and (b), we have matrix $\mathbf{M}$ in a triangular form $\mathbf{T}_{a,b}$, see Eq. \eqref{eq:triangular_matrix}. We find the inverse of $\mathbf{T}_{a,b}$ as the upper finite difference stencil shape 
 \begin{align*}
-	\mathbf{T}^{-1} = 
+	\mathbf{T}_{a,b}^{-1} = 
 	\begin{pmatrix}
 		\frac{1}{a_{1} ~ b_{1}} & \frac{-1}{a_{2} ~ b_{1}} & 0  						& \cdots & 0 \\[1ex]
 		0 						 &   \frac{1}{a_{2} ~ b_{2}} & \frac{-1}{a_{3} ~ b_{2}} &  & \vdots \\
@@ -753,17 +759,12 @@ To compute sub-matrices $P$ and $Q$ for circuit types (a) and (b), we need to fi
 		0  & \cdots 	& &  			0			   & \frac{1}{a_{N} ~ b_{N}} 
 	\end{pmatrix} \text{.}
 \end{align*}
-A multiplication of $\mathbf{T}^{-1}$ with a lower finite difference stencil, see Fig. \ref{fig:matrix_multiplication} (a), results in a tridiagonal shaped matrix as in Eq. \eqref{eq:finite_diff_stencil} with a $n$-th row vector elements 
-\begin{equation*}
-	\left[ \frac{-1}{a_{n}~ b_{n}},  \underbrace{\frac{1}{a_{n}~ b_{n}} + \frac{1}{a_{n+1}~ b_{n}}}_{n = k ~~ \text{(row = col.)}}, \frac{-1}{a_{n+1}~ b_{n}}\right] \text{.}
-\end{equation*}
-In case of circuit type (a), we compute sub-matrix $P$ with this matrix multiplication, while for circuit type (b), we find sub-matrix $Q$ with such a tridiagonal shape.
-%{\color{red} with an upper triangular matrix, like matrix $S$ for circuit (a) or $D$ for circuit (b), results in an upper triangular matrix again; where a multiplication with the finite difference stencil, $S$ for circuit (a) or $D$ for circuit (b), results in a tridiagonal shaped matrix. }
 
+Here, we distinguish two scenarios: a multiplication of $\mathbf{T}^{-1}$ with a finite difference stencil $\mathbf{F}$, see Eq. \eqref{eq:finite_diff_stencil}, and with triangular matrix $\mathbf{T}$. In the first case, we define the resulting matrix as
 \begin{equation}
- 	\mathbf{L}_{\alpha,\beta} := -\mathbf{T}_{a,b}^{-1} ~\cdot~ \mathbf{F}
+	\mathbf{L}_{\alpha,\beta} := -\mathbf{T}_{a,b}^{-1} ~\cdot~ \mathbf{F}
 \end{equation}
-we yield a Laplacian matrix (side)
+and we see that it is a Laplacian matrix {\color{red} (side note with link to wiki)} as
 \begin{equation}
 	\mathbf{L}_{\alpha,\beta} =
 	\begin{pmatrix}
@@ -783,45 +784,13 @@ and diagonal elements
 \begin{equation*}
 	\gamma_{n} = -\left[\alpha_{n}+\beta_{n}\right]
 \end{equation*}
-for $n\in\{1,\ldots,N\}$.
+for $n\in\{1,\ldots,N\}$. Matrix shape $\mathbf{L}_{\alpha,\beta}$ is portrayed in Fig. \ref{fig:matrix_multiplication} (a).
 
-
+In the second case, we have the second upper triangular matrix as $\mathbf{T}_{\tilde{a},\tilde{b}}$ with coefficients $\tilde{a}_{n}$ and $\tilde{b}_{n}$ for $n\in\{1,\ldots,N\}$. We define the product as 
 \begin{equation}
-	\mathbf{L} = \mathbf{T}^{-1} ~ \tilde{F} % Laplacian matrix
+	\mathbf{P}_{\alpha,\beta} := - \mathbf{T}_{a,b}^{-1} ~ \cdot ~ \mathbf{T}_{\tilde{a},\tilde{b}}
 \end{equation}
-
-\begin{equation}
-	\mathbf{U} = \mathbf{T}^{-1} ~ \mathbf{T} % Triangular matrix
-\end{equation}
-
-\begin{equation}
-	\mathbf{W} = \tilde{F}^{-1} ~ \mathbf{T} % Full / dense matrix
-\end{equation}
-
-
-
-\begin{equation}
-	P = \begin{cases}
-		\mathbf{T}^{-1} ~ \tilde{F} \text{,} \quad \text{for circuit type (a),} \\
-		\mathbf{T}^{-1} ~ \mathbf{T} \text{,} \quad \text{for circuit type (b),} \\
-		\tilde{F}^{-1} ~ \mathbf{T} \text{,} \quad \text{for circuit type (c)}
-	\end{cases}
-\end{equation}
-
-\begin{equation}
-	Q = \begin{cases}
-		\mathbf{T}^{-1} ~ \mathbf{T} \text{,} \quad \text{for circuit type (a),} \\
-		\mathbf{T}^{-1} ~ \tilde{F} \text{,} \quad \text{for circuit type (b),} \\
-		\tilde{F}^{-1} ~ \mathbf{T} \text{,} \quad \text{for circuit type (c)}
-	\end{cases}
-\end{equation}
-
-\subsection*{Inverse Triangular and Triangular Matrix}
-
-\begin{equation}
-	P_{\alpha,\beta} := - \mathbf{T}_{a,b}^{-1} ~ \cdot ~ \mathbf{T}_{\tilde{a},\tilde{b}}
-\end{equation}
-
+which has a triangular form again, see Fig. \ref{fig:matrix_multiplication} (b), as
 \begin{equation}
 	P_{\alpha,\beta} = 
 	\begin{pmatrix}
@@ -832,78 +801,54 @@ for $n\in\{1,\ldots,N\}$.
 		& & & & \alpha_{N}
 	\end{pmatrix}
 \end{equation}
-with diagonal elements
+with entries
 \begin{equation}
-	\alpha_{n} = \frac{\tilde{a}_{n}}{a_{n}} \quad \text{and} \quad \beta_{n,k} = \left[\frac{\tilde{a}_{n}}{a_{n}} - \frac{\tilde{a}_{n+1}}{a_{n+1}} \right] \frac{\tilde{b}_{k}}{b_{n}}
-\end{equation}
-for 
-
-We consider the inverse triangular matrix $\mathbf{T}^{-1}$ as above and we specify the second upper triangular matrix as $U = \left[\alpha_{n}~b_{k}\right]$ analog to $T$ in  Eq. \eqref{eq:triangular_matrix}, with equal $b_{k}$ but different $a_{n} \neq \alpha_{n}$. We evaluate the multiplication elementwise as 
-\begin{align}
-	\left. \mathbf{T}^{-1} \cdot U \right\lvert_{n,k} = 
-	\begin{cases}
-		\frac{\alpha_{n}}{a_{n}} \quad &\text{if} ~ n = k ~\text{,}\\[1ex]
-		\left[\frac{\alpha_{n}}{a_{n}} - \frac{\alpha_{n+1}}{a_{n+1}} \right] \frac{b_{k}}{b_{n}}\quad &\text{if} ~ n < k ~\text{,}\\[1ex]
-		0 \quad &\text{else}
-	\end{cases}
-\end{align}
-and so we have in general a triangular matrix. However, if we have a scaling $\alpha_{n} = \epsilon a_{n}$ for all $n \in \{1,\ldots,N\}$ with $\epsilon \in \mathbb{R}$, then we yield a pure diagonal matrix
+	\alpha_{n} = \frac{\tilde{a}_{n}}{a_{n}} \quad \text{and} \quad \beta_{n,k} = \left[\frac{\tilde{a}_{n}}{a_{n}} - \frac{\tilde{a}_{n+1}}{a_{n+1}} \right] \frac{\tilde{b}_{k}}{b_{n}} \text{.}
+\end{equation} 
+In Table \ref{table:triangular_matrix_values}, we see that the coefficients $b_{n}$ are equal for both triangular matrices and so we have $\tilde{b}_{k} \equiv b_{k}$ for $k \in \{1,\ldots,N\}$. The coefficients $a_{n}$ and $\tilde{a}_{n}$ differ in general, but if they are scaled as  $\tilde{a} = \epsilon a_{n}$ for all $n \in \{1,\ldots,N\}$ with $\epsilon \in \mathbb{R}$, {\color{red} (Side Note: this is in particular the case if all values of the related electrical elements are equals. Simple RLC example...)} then we yield a pure diagonal matrix
 \begin{equation*}
-	\mathbf{T}^{-1} \cdot U = \epsilon~I \text{.}
+	\mathbf{P}_{\alpha,\beta} = \epsilon~\mathbf{I} \text{.}
 \end{equation*}
-We emphasize that this matrix multiplication is relevant for circuit type (a) to yield sub-matrix $Q$; and for circuit type (b) to compute $P$.
+with identity matrix $\mathbf{I} =\operatorname{diag}(1,\ldots,1)$.
 
 \subsection*{Inverse Finite Difference Stencil and Triangular Matrix}
 
+In case of ladder type (c), we need to evaluate another matrix multiplication. Here, we invert the finite difference stencil $\tilde{F}$ and we obtain a lower triangular matrix
+\begin{equation*}
+	\mathbf{F}^{-1} =
+	\begin{pmatrix}
+		1 & 0  &  0\\
+		\vdots 	& \ddots &  0 \\
+		1 &	\cdots	 &     1 
+	\end{pmatrix} \text{.}
+\end{equation*}
+We multiply this lower triangular matrix with $\mathbf{T}_{a,b}$ as in Eq. \eqref{eq:triangular_matrix} and we define the result as 
 \begin{equation}
 	\mathbf{Q} := - \mathbf{F}^{-1} ~\cdot~ \mathbf{T}_{a,b}
 \end{equation}
-where $\mathbf{Q} = [q_{n,k}]$ and 
+where $\mathbf{Q} = [q_{n,k}]$ with entries
 \begin{equation}
 	q_{n,k} = b_{k} \sum_{i=1}^{\min\{n,k\}} a_{i}
 \end{equation}
-for $n,k \in \{1,\ldots,N\}$.
-
+for $n,k \in \{1,\ldots,N\}$. The resulting matrix shape is illustrated in Fig. \ref{fig:matrix_multiplication} (c). If all values of $b_{k}$ are equal as
 \begin{equation}
-	\mathbf{Q} = 
-	\def\aa{\color{red}\alpha_{2}}
-	\def\ab{\color{red}\alpha_{N-1}}
+b_{1}=\ldots=b_{N}~=:~\tilde{b}	\text{,}
+\end{equation}
+then this matrix multiplication results in a shape
+\begin{equation*}
+	\mathbf{Q} =~ 
+	\def\aa{\color{red}\tilde{q}_{2}}
+	\def\ab{\color{red}\tilde{q}_{N-1}}
 	\begin{pmatrix}
-		\alpha_{1} & \alpha_{1} & \alpha_{1} & \ldots & \alpha_{1} & \alpha_{1} \\
-		\alpha_{1} & \aa & \aa & \ldots & \aa & \aa \\
-		     & \aa & \alpha_{3} & \ldots & \alpha_{3} & \alpha_{3} \\
+		\tilde{q}_{1} & \tilde{q}_{1} & \tilde{q}_{1} & \ldots & \tilde{q}_{1} & \tilde{q}_{1} \\
+		\tilde{q}_{1} & \aa & \aa & \ldots & \aa & \aa \\
+		& \aa & \tilde{q}_{3} & \ldots & \tilde{q}_{3} & \tilde{q}_{3} \\
 		\vdots     & \vdots & \vdots & \ddots \\
-		\alpha_{1}& \aa & \alpha_{3} & & \ab & \ab \\
-		\alpha_{1} & \aa & \alpha_{3} & & \ab & \alpha_{N}
-	\end{pmatrix}
-\end{equation}
-
-
-The third matrix multiplication is only applied for the first-order systems of circuit type (c). Here, we invert the finite difference stencil $\tilde{F}$ and we obtain a lower triangular matrix
-\begin{equation*}
-	\tilde{F}^{-1} =
-	 	\begin{pmatrix}
-	 	1 & 0  &  0\\
-	 	\vdots 	& \ddots &  0 \\
-	 	1 &	\cdots	 &     1 
-	 \end{pmatrix} \text{.}
+		\tilde{q}_{1}& \aa & \tilde{q}_{3} & & \ab & \ab \\
+		\tilde{q}_{1} & \aa & \tilde{q}_{3} & & \ab & \tilde{q}_{N}
+	\end{pmatrix} \\
 \end{equation*}
-We multiply this lower triangular matrix with $\mathbf{T}$ as in Eq. \eqref{eq:triangular_matrix} and we evaluate the results elementwise as
-\begin{equation}
-	\left. \tilde{F}^{-1} \cdot \mathbf{T}  \right\rvert_{n,k} = b_{k} \sum_{i=1}^{\min\{n,k\}} a_{i} \text{.}
-\end{equation}
-If all values of $b_{n}$ are equal, then this matrix multiplication results in a shape
-\begin{equation*}
-	\tilde{F}^{-1} \cdot \mathbf{T} =
-	\begin{pmatrix}
-		 & \text{---} & v_{1} & \text{---} & \\
-		| & & \text{---} & v_{2} & \text{---} \\
-		v_{1} & | & & &  \\
-		| & v_{2} & & \ddots & \\
-		& | &  & & \\
-	\end{pmatrix}
-\end{equation*}
-where the values of the $n$-th row and column coincide.
+with $\tilde{q}_{n} = \tilde{b} ~ \sum_{i=1}^{\min\{n,k\}} a_{i}$.
 
 \begin{figure}[t!]
 	\centering
