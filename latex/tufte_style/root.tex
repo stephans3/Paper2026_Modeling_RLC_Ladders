@@ -1,0 +1,160 @@
+% !TeX spellcheck = en_US
+\documentclass[a4paper, nobib,justified]{tufte-handout}
+
+\title{Time-domain modeling of RLC Ladder Circuits}
+
+\author[Stephan Scholz]{Stephan Scholz}
+
+%\date{28 March 2010} % without \date command, current date is supplied
+
+%\geometry{showframe} % display margins for debugging page layout
+
+\usepackage{graphicx} % allow embedded images
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+\graphicspath{{graphics/}} % set of paths to search for images
+\usepackage{amsmath}  % extended mathematics
+\usepackage{booktabs} % book-quality tables
+\usepackage{units}    % non-stacked fractions and better unit spacing
+\usepackage{multicol} % multiple column layout facilities
+\usepackage{lipsum}   % filler text
+\usepackage{fancyvrb} % extended verbatim environments
+\fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+%\usepackage{tabularx}
+\usepackage{tikz} 
+\usepackage{subfig}
+\usepackage{euler}
+
+% Standardize command font styles and environments
+\newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+\newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+\newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+\newcommand{\docenv}[1]{\textsf{#1}}% environment name
+\newcommand{\docpkg}[1]{\texttt{#1}}% package name
+\newcommand{\doccls}[1]{\texttt{#1}}% document class name
+\newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+\newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+
+\begin{document}
+	
+	\input{color_template.tex}
+	
+	\maketitle% this prints the handout title, author, and date
+	
+	\begin{abstract}
+		\noindent
+		This document describes the Tufte handout \LaTeX\ document style.
+		It also provides examples and comments on the style's use.
+		Only a brief overview is presented here;
+		for a complete reference, see the sample book.
+	\end{abstract}
+	
+	%\printclassoptions
+	
+	
+	\section*{Introduction}
+Simple circuits consisting of few electrical elements like resistors, capacitors and conductors are standard examples in school and academic courses. They are used to study fundamental concepts like charging behavior or oscillations in physics, electrical engineering and control theory. Capacitors (abbreviated as C) and inductors (abbr. as L) store electric and magnetic energy, in contrast to resistors (abbr. as R). Circuits with resistors and one capacitor or one inductor (we call them RC or RL circuit) are used to exemplify charging and discharging dynamics, which correspond to first-order differential equations. If more than one energy storage is included then we yield higher-order differential equations and they may show oscillatory dynamics. 
+
+In case of a small circuit with only few elements, the mathematical model may be derived with standard nodal analysis by evaluating Kirchhoff's voltage and current law. However, this approach tends be quite inefficient if a circuit contains many components. To solve this problem, the modified nodal analysis has been developed to model large scale circuits as differential-algebraic equations (abbr. as DAE) in a systematic way, see {\color{red} \bfseries Missing CITATION}
+%\cite[p. 27 ff.]{book:najm2010circuit} \cite{article:tischendorf1998topological,article:marz2003finding}.
+
+%	Single circuits like RC and LC circuits are standard examples from school classes, e.g. physics to academic courses, e.g. control eng.. Not only for to describe the electrical behavior, but also emphasize connections to other scientific domains, e.g. waves. Single circuits in control eng. and system theory are used to exemplify the modeling via transfer functions. For simple circuits this approach is easy, but it becomes more difficult for larger circuits. They are used to introduce electronic filters, RC is low-pass; Bode plot.\sidenote{We find implementations, e.g. for LC ladders \url{https://www.mathworks.com/help/rf/ref/lcladder.html}.}
+% 	
+% 	
+% 	Electronic filter design; Cauer topology
+	
+
+	\input{sections/circuit_modeling.tex}
+	
+	\section{System of Differential Equations}
+	
+	\input{sections/second_order_model.tex}
+	\input{sections/first_order_model.tex}
+
+	\input{sections/simulation_example.tex}
+
+
+	\section*{Acknowledgments}	
+	This article is inspired by student projects and theses at the University of Applied Sciences Ravensburg-Weingarten, which were supervised by Lothar Berger and S. Scholz.
+
+
+
+
+	\begin{thebibliography}{9}
+	\bibitem{book:najm2010circuit}\raggedright
+	Najm F N. {\itshape Circuit simulation}. New Jersey: Wiley-IEEE Press; 2010. 318.
+	
+	\bibitem{article:tischendorf1998topological}\raggedright
+	Tischendorf, C. Topological index‐calculation of DAEs in circuit simulation. {\itshape ZAMM‐J. of Applied Mathematics and Mechanics/Zeitschrift für Angewandte Mathematik und Mechanik}. 1998; 78(S3): 1103--1104.
+	
+	\bibitem{article:marz2003finding}\raggedright
+	M{\"a}rz R,  Schwarz  D E, Feldmann U, Sturtzel S, Tischendorf C. Finding beneficial DAE structures in circuit simulation. In: J{\"a}ger W, Krebs HJ, editors.  {\itshape Mathematics—Key Technology for the Future: Joint Projects between Universities and Industry}. 1. Heidelberg: Springer Berlin; 2003. p 413--428.
+	
+	
+	\bibitem{article:gernandt2021porthamiltonian}\raggedright
+	Gernandt H, Haller F E, Reis T, van der Schaft A J.	Port-Hamiltonian formulation of nonlinear electrical circuits. 
+	{\itshape J. of Geometry and Physics}. 2021; 159. doi: {10.1016/j.geomphys.2020.103959},
+	
+	\bibitem{article:gunther2020dynamic}\raggedright
+	G{\"u}nther M, Bartel A, Jacob B, Reis T. Dynamic iteration schemes and port-Hamiltonian formulation in coupled DAE circuit simulation. {\itshape arXiv preprint arXiv:2004.12951}. 2020.
+	
+	\bibitem{article:galetzka2023data}\raggedright
+	Galetzka A, Loukrezis D, De Gersem H. Data-driven modified nodal analysis circuit solver. {\itshape arXiv preprint arXiv:2303.03401}. 2023.
+	
+	\bibitem{article:neary2025neural}\raggedright
+	Neary C, Tsao N, Topcu U. Neural port-hamiltonian differential algebraic equations for compositional learning of electrical networks. {\itshape Proceedings of the 2025 IEEE 64th Conference on Decision and Control (CDC)}. 2025: 2097--2103. doi: {10.1109/CDC57313.2025.11312148}.
+	
+	\bibitem{article:peters2023dynamic}\raggedright
+	Peters D, Scholz S, Berger L. Dynamic Mode Decomposition for Cascaded Electrical Circuits. {\itshape ICoMS '23: Proceedings of the 2023 6th International Conference on Mathematics and Statistics}. 2023: 147--151. doi: {10.1145/3613347.3613370}.		
+	
+	\bibitem{article:piotrowska2021time}\raggedright
+	Piotrowska E, Rogowski K.  Time-Domain Analysis of Fractional Electrical Circuit Containing Two Ladder Elements. {\itshape Electronics}. 2021; 10(4). doi:{10.3390/electronics10040475}.
+	
+	\bibitem{article:greco2013modeling}\raggedright
+	Greco A, Barroso J, Rossi J. Modeling and Analysis of Ladder-Network Transmission Lines with Capacitive and Inductive Lumped Elements. {J. of Electromagnetic Analysis and Applications}. 2013; 5(5): 213--218. doi: 10.4236/jemaa.2013.55034. 
+	
+	\bibitem{article:chen2020electrical}\raggedright
+	Chen HX, Yang L. Electrical characteristics of n-ladder network with external load. {\itshape Indian J. of Physics}. 2020; 94(6): 801--809. doi: {10.1007/s12648-019-01508-5}.
+	
+	\bibitem{software:schwerdtner2025port}\raggedright
+	Schwerdtner P, Sabbadini N, Nicodemus J. PortHamiltonianBenchmarkSystems.jl. v0.2.0. 2025. url: {\url{https://github.com/Algopaul/PortHamiltonianBenchmarkSystems.jl}}.	
+	\end{thebibliography}
+	
+	\newpage
+
+\begin{table}[b]
+	\renewcommand{\arraystretch}{1.3}
+	\centering
+	\caption{\MakeUppercase{Matrix Entries of Second-Order ODE}}
+	\begin{tabular}{l | c c c}
+		\toprule
+		Shunt & $m_{n,k}$ & $d_{n,k}$ & $s_{n,k}$ \\
+		\midrule
+		Capacitor &
+		$L_{n}~C_{k} ~~\text{if} ~ n \leq k$ 
+		& $	R_{n}~C_{k} ~~\text{if} ~ n \leq k$ & 
+		$\begin{matrix}
+			1 ~\text{if} ~ n = k ~\text{,}\\
+			-1 ~\text{if} ~ n = k+1
+		\end{matrix}$ \\
+		Resistor &
+		$\frac{L_{n}}{R_{k}} ~~\text{if} ~ n \leq k$ &
+		$\begin{matrix}
+			1 ~\text{if} ~ n = k ~\text{,}\\
+			-1 ~\text{if} ~ n = k+1
+		\end{matrix}$ & 
+		$\frac{1}{R_{k}~ C_{n}}~~\text{if} ~ n \leq k$ \\
+		Inductor &
+		$\begin{matrix}
+			1 ~\text{if} ~ n = k ~\text{,}\\
+			-1 ~\text{if} ~ n = k+1
+		\end{matrix}$ &
+		&
+		\\
+		\bottomrule
+	\end{tabular}
+	\label{table:overview_matrix_entries}
+\end{table}	
+	
+	
+\end{document}
