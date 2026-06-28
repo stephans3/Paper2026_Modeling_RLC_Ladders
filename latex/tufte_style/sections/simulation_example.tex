@@ -1,4 +1,12 @@
+% !TeX spellcheck = en_US
 \section{Simulation Examples}
+{
+	\color{red}
+\begin{itemize}
+	\item Zuerst Sprungantwort
+	\item Danach Sweep
+\end{itemize}
+}
 
 For each proposed ladder type, we assume an example consisting of ten sub-circuits. The resistor, capacitor and inductor values  are equal for all sub-circuits, they are listed in Table \ref{table:simulation_parameters}. As we have equal component values, the triangular matrices for each ladder type are filled with ones and scaled as
 \begin{equation*}
@@ -25,6 +33,7 @@ for circuit type (b) (resistor as shunt) and
 \end{equation}
 for circuit type (c) (inductor as shunt). 
 
+We demonstrate the dynamical behavior of our ladder systems with two types of input signals. Firstly, we consider a step input and secondly a sweep signal.
 
 \begin{table}[b]
 	\renewcommand{\arraystretch}{1.3}
@@ -35,14 +44,34 @@ for circuit type (c) (inductor as shunt).
 		Param. & Value & Description \\
 		\midrule
 		N & 10 & Num. of Circuits\\
-		$R_{n}$ & 2 & Resistance in $[\Omega]$ \\
-		$C_{n}$ & 3 & Capacitance in $[F]$\\
-		$L_{n}$ & 5 & Inductance in $[H]$\\
+		$r_{n}$ & 2 & Resistance in $[\Omega]$ \\
+		$c_{n}$ & 3 & Capacitance in $[F]$\\
+		$\ell_{n}$ & 5 & Inductance in $[H]$\\
 		\bottomrule
 	\end{tabular}
 	\label{table:simulation_parameters}
 \end{table}
 
+\subsection{Step Input Signal}
+
+\begin{figure}[t!]
+	\centering
+	\subfloat[Step Signal $\mu$]{\includegraphics[width=0.95\columnwidth]{images/step_signal}}
+	
+	\subfloat[Capacitor]{\includegraphics[width=0.95\columnwidth]{images/step_shunt_capacitor}}
+	
+	\subfloat[Resistor]{\includegraphics[width=0.95\columnwidth]{images/step_shunt_resistor}}
+	
+	\subfloat[Inductor]{\includegraphics[width=0.95\columnwidth]{images/step_shunt_inductor}}
+	
+	\caption{Input signals and resulting states for Capacitor, Resistor and Inductor.}
+	\label{fig:step_input_output_results}
+\end{figure}	
+
+
+
+
+\subsection{Symmetric Sweep Input Signal}
 In case of ladder type (b) and (c), see Fig. \ref{fig:cascaded_rlc_circuits}, we need to differentiate the input voltage once and twice. We consider a two-sided chirp signal which starts and terminates at zero Volt and its first and second derivative, see Fig. \ref{fig:input_output_results} (a). We design an oscillation 
 \begin{equation}
 	f(t,p) = \sin\left(p~\pi~g(t,p)\right) \label{eq:input_base_oscillation}

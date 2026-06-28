@@ -1,7 +1,12 @@
-
+% !TeX spellcheck = en_US
 
 \subsection{First-Order System}
-Subsequently, we reformulate Eq. \eqref{eq:rlc_second_order_1} to yield a first-order system in the common state space formulation. Hence, we firstly find
+Subsequently, we reformulate Eq. \eqref{eq:rlc_second_order_1} to yield a first-order system in the common state space formulation
+\begin{align*}
+	\dot{x}(t) =&~ A~ x(t) + B~\mu(t)\\
+	y(t) =&~ C^\top~x(t)
+\end{align*}
+with states $x:[0,T]\rightarrow \mathbb{R}^{2N}$, control input signal $\mu:[0,T]\rightarrow \mathbb{R}$, output signal $y:[0,T]\rightarrow \mathbb{R}$, system matrix $A \in \mathbb{R}^{2N\times2N}$, and vectors $B, C \in \mathbb{R}^{2N}$. Hence, we firstly find
 \begin{equation}
 	\ddot{z}(t) + M^{-1}~D ~ \dot{z}(t) + M^{-1}~S ~ z(t) = M^{-1}~G ~ \mu(t)	 \label{eq:rlc_second_order_2}
 \end{equation}
@@ -13,13 +18,21 @@ and vector $\tilde{G}:= M^{-1}~G$, and we note secondly
 \begin{equation*}
 	\ddot{z}(t) = A_{I} ~ z(t)  + A_{II} ~ \dot{z}(t) + \tilde{G} ~ z(t) \text{.}
 \end{equation*}
-We introduce the new states $x_{1}(t) = z(t)$, $x_{2}(t) = \partial_{t} z(t)$ and we formulate the state space as 
+We introduce the new states $x(t) = \left[x_{1}(t),x_{2}(t)\right]$ with $x_{1}(t) = z(t)$, $x_{2}(t) = \partial_{t} z(t)$, and we define the voltage at the last shunt as our output signal 
+\begin{equation}
+	y(t) := z_{N}(t) = \left[\underbrace{0,\ldots,0}_{(N-1)\text{ zeros}},1,\overbrace{0\ldots,0}^{N \text{ zeros}}\right] 	\begin{pmatrix}
+		{x}_{1} \\	
+		{x}_{2}
+	\end{pmatrix} = C^{\top} x(t) \text{.} 
+\end{equation}
+So, we formulate the state space as 
+\begin{subequations}
 \begin{align}
 	\begin{pmatrix}
 		\dot{x}_{1} \\	
 		\dot{x}_{2}
 	\end{pmatrix}
-	=
+	=&~
 	\underbrace{
 		\begin{pmatrix}
 			0 & I \\
@@ -37,10 +50,12 @@ We introduce the new states $x_{1}(t) = z(t)$, $x_{2}(t) = \partial_{t} z(t)$ an
 			\tilde{G}
 		\end{pmatrix}
 	}_{=: B}
-	\mu(t)\text{.}
+	\mu(t) \label{eq:state_space1}
+	\text{,} \\
+	y(t) =&~ C^\top ~ x(t) \text{.} \label{eq:state_space2}
 \end{align}
-
-
+\end{subequations}
+In Eq. \eqref{eq:state_space1}, in matrix $A$ we assume a zero sub-matrix $0 = 0_{N\times N}$ and in vector $B$ we mean a row vector $0 = 0_{N}$.
 If matrix $M$ in Eq. (\ref{eq:rlc_second_order_1},\ref{eq:rlc_second_order_2}) is not well conditioned, i.e. $M$ has a large condition number $\kappa = \frac{\max_{i} |\lambda_{i}|}{\min_{i} |\lambda_{i}|} \gg 1$ with eigenvalues $\lambda_{i}$ and $i \in \{1,\ldots,2N\}$, then a numerical computation of sub-matrices $A_{\mathrm{I}}$ and $A_{\mathrm{II}}$ as in Eq. \eqref{eq:first_order_submatrices} might be prone to numerical errors. Hence, we find a inverse matrix $M^{-1}$ and the concluding multiplications, Eq. \eqref{eq:first_order_submatrices}, in a closed form. We have matrix $M$ either in a triangular shape, see Eq. \eqref{eq:triangular_matrix}, or as a finite difference stencil, see Eq. \eqref{eq:finite_diff_stencil}. Thus, we have three types of matrix multiplications as sketched in  Fig. \ref{fig:matrix_multiplication} and we derive them subsequently.
 
 
@@ -196,6 +211,46 @@ In Table \ref{table:triangular_matrix_values}, we see that the coefficients $b_{
 \end{equation*}
 with identity matrix $\mathbf{I} =\operatorname{diag}(1,\ldots,1)$.
 
+The input signal $\mu$ is scaled by vector $B = [0, \tilde{G}]^\top$ and we find $\tilde{G}$ as 
+\begin{equation}
+	\tilde{G} ~=~ \mathbf{T}_{a,b}^{-1} ~ G = \mathbf{T}_{a,b}^{-1} ~ 
+	\begin{pmatrix}
+		1 \\
+		0 \\
+		\vdots \\
+		0
+	\end{pmatrix} ~=~
+	\begin{pmatrix}
+		\frac{1}{a_{1} ~ b_{1}} \\
+		0 \\
+		\vdots \\
+		0
+	\end{pmatrix}
+\end{equation}
+and further, we yield
+\begin{equation*}
+	B = 
+	\begin{pmatrix}
+		0 \\
+		\vdots \\
+		0 \\
+		\frac{1}{a_{1} ~ b_{1}} \\
+		0 \\
+		\vdots \\
+		0
+	\end{pmatrix}
+	\begin{matrix}
+		\\
+		\\
+		\\
+		\leftarrow (N+1)\text{-th position}\\
+		\\
+		\\
+		~
+	\end{matrix}
+	\textbf{.}
+\end{equation*}
+
 \subsection*{Inverse Finite Difference Stencil}
 
 In case of ladder type (c), we need to evaluate another matrix multiplication. Here, we invert the finite difference stencil $\tilde{F}$ and we obtain a lower triangular matrix
@@ -263,4 +318,26 @@ then this matrix multiplication results in a symmetric shape
 \end{equation*}
 with $\tilde{q}_{n} = \tilde{b} ~ \sum\limits_{i=1}^{n} a_{i}$, see Fig. \ref{fig:dense_matrix} for illustration.
 
-
+We note the scaling vector $B$ of input signal $\mu$ in this case as
+\begin{equation*}
+	B = 
+	\begin{pmatrix}
+		0 \\
+		\vdots \\
+		0 \\
+		1 \\
+		1 \\
+		\vdots \\
+		1
+	\end{pmatrix}
+	\begin{matrix}
+		\\
+		\\
+		\\
+		\leftarrow (N+1)\text{-th position}\\
+		\\
+		\\
+		~
+	\end{matrix}
+\end{equation*}
+because we have here $\tilde{G} = \mathbf{F}^{-1}~G = \left[1,\ldots,1\right]^\top$.

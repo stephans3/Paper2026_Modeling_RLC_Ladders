@@ -50,13 +50,19 @@
 	\end{abstract}
 	
 	%\printclassoptions
-	
+	{ \color{red}
+	\textbf{Kontrolle}
+	\begin{itemize}
+		\item Matrizen einheitlich fett
+		\item R, L, C Koeffizienten klein: $r$, $\ell$, $c$, da Gross fuer Matrizen und Vektoren
+	\end{itemize}
+	}
 	
 	\section*{Introduction}
 Simple circuits consisting of few electrical elements like resistors, capacitors and conductors are standard examples in school and academic courses. They are used to study fundamental concepts like charging behavior or oscillations in physics, electrical engineering and control theory. Capacitors (abbreviated as C) and inductors (abbr. as L) store electric and magnetic energy, in contrast to resistors (abbr. as R). Circuits with resistors and one capacitor or one inductor (we call them RC or RL circuit) are used to exemplify charging and discharging dynamics, which correspond to first-order differential equations. If more than one energy storage is included then we yield higher-order differential equations and they may show oscillatory dynamics. 
 
-In case of a small circuit with only few elements, the mathematical model may be derived with standard nodal analysis by evaluating Kirchhoff's voltage and current law. However, this approach tends be quite inefficient if a circuit contains many components. To solve this problem, the modified nodal analysis has been developed to model large scale circuits as differential-algebraic equations (abbr. as DAE) in a systematic way, see {\color{red} \bfseries Missing CITATION}
-%\cite[p. 27 ff.]{book:najm2010circuit} \cite{article:tischendorf1998topological,article:marz2003finding}.
+In case of a small circuit with only few elements, the mathematical model may be derived with standard nodal analysis by evaluating Kirchhoff's voltage and current law. However, this approach tends be quite inefficient if a circuit contains many components. To solve this problem, the modified nodal analysis has been developed to model large scale circuits as differential-algebraic equations (abbr. as DAE) in a systematic way, see
+\cite[p. 27 ff.]{book:najm2010circuit} \cite{article:tischendorf1998topological,article:marz2003finding}.
 
 %	Single circuits like RC and LC circuits are standard examples from school classes, e.g. physics to academic courses, e.g. control eng.. Not only for to describe the electrical behavior, but also emphasize connections to other scientific domains, e.g. waves. Single circuits in control eng. and system theory are used to exemplify the modeling via transfer functions. For simple circuits this approach is easy, but it becomes more difficult for larger circuits. They are used to introduce electronic filters, RC is low-pass; Bode plot.\sidenote{We find implementations, e.g. for LC ladders \url{https://www.mathworks.com/help/rf/ref/lcladder.html}.}
 % 	
@@ -72,6 +78,15 @@ In case of a small circuit with only few elements, the mathematical model may be
 	\input{sections/first_order_model.tex}
 
 	\input{sections/simulation_example.tex}
+
+	\section{Conclusion}
+	\begin{itemize}
+		\item Systems with two (instead of 3) components
+		\item Parallel branches (Telegraphers eq.)
+		\item matrix shapes -> linear algebra operations
+		\item multi-input multi-output systems
+		\item dynamic mode decomposition (article)
+	\end{itemize}
 
 
 	\section*{Acknowledgments}	
